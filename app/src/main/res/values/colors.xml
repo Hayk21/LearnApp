@@ -3,6 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="editColor">#fdf8f2</color>
-    <color name="jghjg">#b3b3b3</color>
+    <color name="editColor">#FDF8F2</color>
+    <color name="hintColor">#b3b3b3</color>
+    <color name="green2">#79C143</color>
+    <color name="text_color1">#EDFDCD</color>
+    <color name="white">#ffffff</color>
 </resources>

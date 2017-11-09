@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">LearnApp</string>
+    <string name="user_name">Username</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="restore">Restore Purchases</string>
+    <string name="conditions">Terms and Conditions</string>
+    <string name="faq">FAQ</string>
+    <string name="contact">Contact Us</string>
+    <string name="title_activity_second">SecondActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>
