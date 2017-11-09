@@ -1,153 +1,120 @@
 package com.hayk.learnapp;
 
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.os.Build;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.hayk.learnapp.fragments.LoginFragment;
 
-    EditText mNameEdit;
-    EditText mPasswordEdit;
-    Button mSignIn;
-    boolean mValid = false;
-    ConnectivityManager mConManager;
-    ImageView mLogo;
-    LinearLayout linear;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener  {
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static final String KEY_FOR_LOG = "key_for_log";
+    private LinearLayout container;
+    private SharedPreferences loginPref;
+    ActionBarDrawerToggle toggle;
+    DrawerLayout drawer;
+    NavigationView navigationView;
+    Toolbar toolbar;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    LoginFragment.onActionBarSetListener actionBarSetListener;
+    LoginFragment loginFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
 
-        linear = (LinearLayout) findViewById(R.id.linear);
-        mNameEdit = (EditText) findViewById(R.id.edit_name);
-        mPasswordEdit = (EditText) findViewById(R.id.edit_password);
-        mSignIn = (Button) findViewById(R.id.sign_button);
-        mLogo = (ImageView) findViewById(R.id.logo);
-        mLogo.setColorFilter(getResources().getColor(R.color.white));
-        final String emailPattern = "[a-zA-Z0-9._-]+@+[a-z]+.+[a-z]+";
-        mConManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-        linear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mNameEdit.clearFocus();
-                mPasswordEdit.clearFocus();
-            }
-        });
-
-        mNameEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_DONE ||
-                        i == EditorInfo.IME_ACTION_NEXT) {
-                    String mail = mNameEdit.getText().toString();
-
-                    if (!mail.matches(emailPattern) && mail.length()>0) {
-                        Toast.makeText(MainActivity.this, "Not valid email", Toast.LENGTH_SHORT).show();
-                        mValid = false;
-                    } else {
-                        mValid = true;
-                    }
-                }
-                return false;
-            }
-        });
-
-        mNameEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (!b) {
-
-                    String mail = mNameEdit.getText().toString();
-
-                    if (!mail.matches(emailPattern) && mail.length()>0) {
-                        Toast.makeText(MainActivity.this, "Not valid email", Toast.LENGTH_SHORT).show();
-                        mValid = false;
-                    } else {
-                        mValid = true;
-                    }
-
-                    InputMethodManager imm = (InputMethodManager) getSystemService(MainActivity.this.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
-                }
-            }
-        });
-
-        mPasswordEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_DONE ||
-                        i == EditorInfo.IME_ACTION_NEXT) {
-                    String password = mPasswordEdit.getText().toString();
-
-                    if (password.length() > 6) {
-                        mValid = true;
-
-                    } else if(password.length() <= 6 && password.length() !=0) {
-                        Toast.makeText(MainActivity.this, "Not valid password", Toast.LENGTH_SHORT).show();
-                        mValid = false;
-                    }else {
-                        mValid = false;
-                    }
-                }
-                return false;
-            }
-        });
-
-        mPasswordEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (!b) {
-
-                    String password = mPasswordEdit.getText().toString();
-
-                    if (password.length() > 6) {
-                        mValid = true;
-
-                    } else if(password.length() <= 6 && password.length() !=0) {
-                        Toast.makeText(MainActivity.this, "Not valid password", Toast.LENGTH_SHORT).show();
-                        mValid = false;
-                    }else {
-                        mValid = false;
-                    }
-                    InputMethodManager imm = (InputMethodManager) getSystemService(MainActivity.this.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
-                }
-            }
-        });
-
-        mSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mValid) {
-                    if (mConManager.getActiveNetworkInfo() != null) {
-                        Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(MainActivity.this, "Please turn on internet connection", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this, "Failed to login", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
 
+//        Menu menu = navigationView.getMenu();
+//
+//        // find MenuItem you want to change
+//        MenuItem nav_camara = menu.findItem(R.id.nav_camera);
+//
+//        // set new title to the MenuItem
+//        nav_camara.setTitle("NewTitleForCamera");
+//
+//        // do the same for other MenuItems
+//        MenuItem nav_gallery = menu.findItem(R.id.nav_gallery);
+//        nav_gallery.setTitle("NewTitleForGallery");
+
+
+
+        navigationView.setNavigationItemSelectedListener(this);
+        init();
     }
+
+    private void init(){
+        container = (LinearLayout)findViewById(R.id.main_container);
+        loginPref = getPreferences(MODE_PRIVATE);
+        fragmentManager = getFragmentManager();
+        actionBarSetListener = new LoginFragment.onActionBarSetListener() {
+            @Override
+            public void setActionBar() {
+                getSupportActionBar().show();
+                drawer.addView(navigationView);
+                toggle.setDrawerIndicatorEnabled(true);
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.remove(loginFragment);
+                fragmentTransaction.commit();
+            }
+        };
+        if(loginPref.getBoolean(KEY_FOR_LOG,false)){
+
+        }else {
+            toggle.setDrawerIndicatorEnabled(false);
+            drawer.removeView(navigationView);
+            getSupportActionBar().hide();
+            loginFragment = new LoginFragment();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.main_container,loginFragment);
+            fragmentTransaction.commit();
+            loginFragment.setActionListener(actionBarSetListener);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
 }
