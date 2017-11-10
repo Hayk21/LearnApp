@@ -10,13 +10,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 import com.hayk.learnapp.fragments.LoginFragment;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener  {
+public class MainActivity extends AppCompatActivity {
 
     public static final String KEY_FOR_LOG = "key_for_log";
     private LinearLayout container;
@@ -45,23 +43,6 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-
-//        Menu menu = navigationView.getMenu();
-//
-//        // find MenuItem you want to change
-//        MenuItem nav_camara = menu.findItem(R.id.nav_camera);
-//
-//        // set new title to the MenuItem
-//        nav_camara.setTitle("NewTitleForCamera");
-//
-//        // do the same for other MenuItems
-//        MenuItem nav_gallery = menu.findItem(R.id.nav_gallery);
-//        nav_gallery.setTitle("NewTitleForGallery");
-
-
-
-        navigationView.setNavigationItemSelectedListener(this);
         init();
     }
 
@@ -69,10 +50,12 @@ public class MainActivity extends AppCompatActivity
         container = (LinearLayout)findViewById(R.id.main_container);
         loginPref = getPreferences(MODE_PRIVATE);
         fragmentManager = getFragmentManager();
+        getSupportActionBar().setTitle("");
         actionBarSetListener = new LoginFragment.onActionBarSetListener() {
             @Override
             public void setActionBar() {
                 getSupportActionBar().show();
+                getSupportActionBar().setTitle("");
                 drawer.addView(navigationView);
                 toggle.setDrawerIndicatorEnabled(true);
                 fragmentTransaction = fragmentManager.beginTransaction();
@@ -102,19 +85,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
 }

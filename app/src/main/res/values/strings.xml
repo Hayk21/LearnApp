@@ -8,6 +8,9 @@
     <string name="faq">FAQ</string>
     <string name="contact">Contact Us</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="users">Users</string>
+    <string name="page2">Page 2</string>
+    <string name="log_out">Log Out</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

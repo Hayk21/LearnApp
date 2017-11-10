@@ -5,25 +5,25 @@
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/users"
-            android:title="Users" />
+            android:title="@string/users" />
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/image_placeholder"
-            android:title="Page 2" />
+            android:title="@string/page2" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/image_placeholder"
-            android:title="Page 2" />
+            android:title="@string/page2" />
     </group>
 
-    <group android:checkableBehavior="single"
-        android:id="@+id/group1">
+    <!--<group android:checkableBehavior="single"-->
+        <!--android:id="@+id/group1">-->
 
-        <item
-            android:id="@+id/nav_share"
-            android:icon="@drawable/logout"
-            android:title="Log Out" />
-        </group>
+        <!--<item-->
+            <!--android:id="@+id/nav_share"-->
+            <!--android:icon="@drawable/logout"-->
+            <!--android:title="@string/log_out" />-->
+        <!--</group>-->
 
 
 

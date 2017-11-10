@@ -18,8 +18,118 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:fitsSystemWindows="true" >
 
-        android:fitsSystemWindows="true"
-        app:menu="@menu/activity_main_drawer" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="60dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:src="@drawable/users" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/users"
+                    android:textStyle="italic"
+                    android:textColor="@color/light_black"
+                    android:textSize="20sp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:src="@drawable/image_placeholder" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/page2"
+                    android:textStyle="italic"
+                    android:textColor="@color/light_black"
+                    android:textSize="20sp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:src="@drawable/image_placeholder" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/page2"
+                    android:textStyle="italic"
+                    android:textColor="@color/light_black"
+                    android:textSize="20sp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="160dp"
+                android:layout_height="1dp"
+                android:background="@color/line_color" />
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        >
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:src="@drawable/logout" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
+            android:text="@string/log_out"
+            android:textStyle="italic"
+            android:textColor="@color/light_black"
+            android:textSize="20sp"/>
+    </LinearLayout>
+        </LinearLayout>
+        </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>
