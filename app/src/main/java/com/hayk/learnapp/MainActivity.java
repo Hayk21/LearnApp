@@ -10,9 +10,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.LinearLayout;
 
+import com.hayk.learnapp.fragments.AlbumsFragment;
 import com.hayk.learnapp.fragments.LoginFragment;
+import com.hayk.learnapp.fragments.UsersFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     LoginFragment.onActionBarSetListener actionBarSetListener;
+    UsersFragment.usersFragmentEventListener eventListener;
     LoginFragment loginFragment;
+    LinearLayout usersItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         init();
+        setListeners();
     }
 
     private void init(){
         container = (LinearLayout)findViewById(R.id.main_container);
+        usersItem = (LinearLayout)findViewById(R.id.users_item);
         loginPref = getPreferences(MODE_PRIVATE);
         fragmentManager = getFragmentManager();
         getSupportActionBar().setTitle("");
@@ -63,6 +70,15 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.commit();
             }
         };
+        eventListener = new UsersFragment.usersFragmentEventListener() {
+            @Override
+            public void usersEvent() {
+                AlbumsFragment albumsFragment = new AlbumsFragment();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.main_container,albumsFragment);
+                fragmentTransaction.commit();
+            }
+        };
         if(loginPref.getBoolean(KEY_FOR_LOG,false)){
 
         }else {
@@ -75,6 +91,19 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.commit();
             loginFragment.setActionListener(actionBarSetListener);
         }
+    }
+
+    private void setListeners(){
+        usersItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.closeDrawer(GravityCompat.START);
+                UsersFragment usersFragment = new UsersFragment();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.add(R.id.main_container,usersFragment);
+                fragmentTransaction.commit();
+            }
+        });
     }
 
     @Override
