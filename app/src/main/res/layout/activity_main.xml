@@ -26,113 +26,124 @@
             android:orientation="vertical"
             android:paddingTop="60dp">
 
-            <LinearLayout
-                android:layout_width="141dp"
-                android:layout_height="48dp"
-                android:clickable="true"
-                android:orientation="horizontal"
-                android:id="@+id/users_item">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:src="@drawable/users" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="@string/users"
-                    android:textColor="@color/light_black"
-                    android:textSize="20sp"
-                    android:textStyle="italic" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="141dp"
-                android:layout_height="48dp"
-                android:clickable="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:src="@drawable/image_placeholder" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="@string/page2"
-                    android:textColor="@color/light_black"
-                    android:textSize="20sp"
-                    android:textStyle="italic" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="141dp"
-                android:layout_height="48dp"
-                android:clickable="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:src="@drawable/image_placeholder" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="@string/page2"
-                    android:textColor="@color/light_black"
-                    android:textSize="20sp"
-                    android:textStyle="italic" />
-            </LinearLayout>
-
-            <View
+            <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="160dp"
-                android:background="@color/line_color" />
+                android:layout_height="0dp"
+                android:layout_weight="1.5"
+                android:id="@+id/options_list"/>
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="141dp"-->
+                <!--android:layout_height="48dp"-->
+                <!--android:clickable="true"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:id="@+id/users_item">-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:src="@drawable/users" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="48dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:text="@string/users"-->
+                    <!--android:textColor="@color/light_black"-->
+                    <!--android:textSize="20sp"-->
+                    <!--android:textStyle="italic" />-->
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="141dp"-->
+                <!--android:layout_height="48dp"-->
+                <!--android:clickable="true"-->
+                <!--android:orientation="horizontal">-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:src="@drawable/image_placeholder" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="48dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:text="@string/page2"-->
+                    <!--android:textColor="@color/light_black"-->
+                    <!--android:textSize="20sp"-->
+                    <!--android:textStyle="italic" />-->
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="141dp"-->
+                <!--android:layout_height="48dp"-->
+                <!--android:clickable="true"-->
+                <!--android:orientation="horizontal">-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:src="@drawable/image_placeholder" />-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="48dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:text="@string/page2"-->
+                    <!--android:textColor="@color/light_black"-->
+                    <!--android:textSize="20sp"-->
+                    <!--android:textStyle="italic" />-->
+            <!--</LinearLayout>-->
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
+                    android:background="@color/line_color" />
 
 
-            <LinearLayout
-                android:layout_width="144dp"
-                android:layout_height="48dp"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="10dp"
-                android:clickable="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:src="@drawable/logout" />
-
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="@string/log_out"
-                    android:textColor="@color/light_black"
-                    android:textSize="20sp"
-                    android:textStyle="italic" />
-            </LinearLayout>
+                    android:layout_marginTop="10dp"
+                    android:clickable="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:src="@drawable/logout" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/log_out"
+                        android:singleLine="true"
+                        android:textColor="@color/light_black"
+                        android:textSize="20sp"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+            </FrameLayout>
         </LinearLayout>
     </android.support.design.widget.NavigationView>
 

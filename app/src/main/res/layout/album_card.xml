@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="160dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textColor="@color/light_black"
+        android:textSize="22sp"
+        android:textStyle="italic"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:gravity="center_vertical"
+        android:id="@+id/album_title" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:scrollbars="horizontal"
+        android:scrollbarSize="10dp"
+        android:scrollbarThumbHorizontal="@color/line_color"
+        android:scrollbarTrackHorizontal="@drawable/rec_white"
+        android:fadeScrollbars="false"
+        android:id="@+id/photos_list"
+        android:layout_marginBottom="10dp"/>
+
+
+</LinearLayout>

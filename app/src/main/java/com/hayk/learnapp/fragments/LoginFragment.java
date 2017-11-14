@@ -3,7 +3,6 @@ package com.hayk.learnapp.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hayk.learnapp.MainActivity;
 import com.hayk.learnapp.R;
 
 
@@ -31,7 +29,19 @@ public class LoginFragment extends Fragment {
     private boolean validName = false, validPassword = false;
     private ConnectivityManager conectManager;
     final private String emailPattern = "[a-zA-Z0-9._-]+@+[a-z]+.+[a-z]+";
-    onActionBarSetListener actionBarSetListener;
+    OnLoginEndedListener onLoginEndedListener;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onLoginEndedListener = (OnLoginEndedListener) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onLoginEndedListener = null;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -143,12 +153,8 @@ public class LoginFragment extends Fragment {
                 if (conectManager.getActiveNetworkInfo() != null) {
                     if (validName) {
                         if (validPassword) {
-                            SharedPreferences loginPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = loginPref.edit();
-                            editor.putBoolean(MainActivity.KEY_FOR_LOG, true);
-                            editor.apply();
-                            if (actionBarSetListener != null) {
-                                actionBarSetListener.setActionBar();
+                            if (onLoginEndedListener != null) {
+                                onLoginEndedListener.loginEnd();
                             }
                         } else {
                             Toast.makeText(getActivity(), "Not valid password", Toast.LENGTH_SHORT).show();
@@ -164,12 +170,8 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    public void setActionListener(onActionBarSetListener actionBarSetListener) {
-        this.actionBarSetListener = actionBarSetListener;
-    }
-
-    public interface onActionBarSetListener {
-        void setActionBar();
+    public interface OnLoginEndedListener {
+        void loginEnd();
     }
 
 }
