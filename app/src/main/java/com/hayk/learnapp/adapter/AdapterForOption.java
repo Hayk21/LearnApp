@@ -29,7 +29,7 @@ public class AdapterForOption extends RecyclerView.Adapter<AdapterForOption.View
         this.context = context;
         list = new ArrayList<>();
         list.add(new OptionItem(R.drawable.users,context.getString(R.string.users)));
-        list.add(new OptionItem(R.drawable.image_placeholder,context.getString(R.string.page2)));
+        list.add(new OptionItem(R.drawable.phone,context.getString(R.string.contacts)));
         list.add(new OptionItem(R.drawable.image_placeholder,context.getString(R.string.page2)));
     }
 

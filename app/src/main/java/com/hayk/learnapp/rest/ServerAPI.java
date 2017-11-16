@@ -19,4 +19,7 @@ public interface ServerAPI {
 
     @GET("photos")
     Call<List<Photo>> getPhotos(@Query("albumId") int albumId);
+
+//    @GET("photos")
+//    void getPhotos(@Query("albumId")int albumId, Callback<List<Photo>> callback);
 }

@@ -9,6 +9,10 @@ public class RESTHelper {
     private static String users = "/users";
     private static String albums = "/albums";
 
+    public static String getBaseURL(){
+        return baseURL;
+    }
+
     public static String getUsers(){
         return baseURL + users;
     }

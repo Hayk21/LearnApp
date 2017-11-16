@@ -29,7 +29,7 @@ public class LoginFragment extends Fragment {
     private boolean validName = false, validPassword = false;
     private ConnectivityManager conectManager;
     final private String emailPattern = "[a-zA-Z0-9._-]+@+[a-z]+.+[a-z]+";
-    OnLoginEndedListener onLoginEndedListener;
+    private OnLoginEndedListener onLoginEndedListener;
 
     @Override
     public void onAttach(Context context) {

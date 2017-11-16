@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hayk.learnapp.R;
-import com.hayk.learnapp.application.ApplicationClass;
+import com.hayk.learnapp.application.AppController;
 import com.hayk.learnapp.rest.Album;
 import com.hayk.learnapp.rest.Photo;
 
@@ -28,14 +28,14 @@ import retrofit.Response;
 public class AdapterForAlbums extends RecyclerView.Adapter<AdapterForAlbums.ViewHolder> {
     private Context context;
     private List<Album> list;
-    private OnAlbumAdapterItemClickListener adapterItemClickListener;
+//    private OnAlbumAdapterItemClickListener adapterItemClickListener;
 
     public AdapterForAlbums(Context context){
         this.context = context;
         list = new ArrayList<>();
     }
 
-    public void addItems(List<Album> list){
+    public void updateList(List<Album> list){
         this.list = list;
         notifyDataSetChanged();
     }
@@ -48,25 +48,25 @@ public class AdapterForAlbums extends RecyclerView.Adapter<AdapterForAlbums.View
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.setOnAlbumViewHolderListener(new ViewHolder.OnAlbumViewHolderItemClickListener() {
-            @Override
-            public void onItemClicked(int position) {
-                if(adapterItemClickListener != null){
-                    adapterItemClickListener.onItemClicked(list.get(position));
-                }
-            }
-        });
+//        holder.setOnAlbumViewHolderListener(new ViewHolder.OnAlbumViewHolderItemClickListener() {
+//            @Override
+//            public void onItemClicked(int position) {
+//                if(adapterItemClickListener != null){
+//                    adapterItemClickListener.onItemClicked(list.get(position));
+//                }
+//            }
+//        });
         holder.title.setText(list.get(position).getTitle());
         holder.photosList.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
 
-        Call<List<Photo>> photos = ((ApplicationClass)context.getApplicationContext()).getServerAPI().getPhotos(list.get(position).getId());
+        Call<List<Photo>> photos = AppController.getServerAPI().getPhotos(list.get(position).getId());
 
         photos.enqueue(new Callback<List<Photo>>() {
             @Override
             public void onResponse(Response<List<Photo>> response) {
                 AdapterForPhotos adapterForPhotos = new AdapterForPhotos(context);
                 holder.photosList.setAdapter(adapterForPhotos);
-                adapterForPhotos.addItems(response.body());
+                adapterForPhotos.updateList(response.body());
             }
 
             @Override
@@ -81,40 +81,40 @@ public class AdapterForAlbums extends RecyclerView.Adapter<AdapterForAlbums.View
         return list.size();
     }
 
-    public interface OnAlbumAdapterItemClickListener{
-        void onItemClicked(Album album);
-    }
-
-    public void setOnAdapterListener(OnAlbumAdapterItemClickListener adapterListener){
-        this.adapterItemClickListener = adapterListener;
-    }
+//    public interface OnAlbumAdapterItemClickListener{
+//        void onItemClicked(Album album);
+//    }
+//
+//    public void setOnAdapterListener(OnAlbumAdapterItemClickListener adapterListener){
+//        this.adapterItemClickListener = adapterListener;
+//    }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView title;
         RecyclerView photosList;
-        OnAlbumViewHolderItemClickListener viewHolderItemClickListener;
+//        OnAlbumViewHolderItemClickListener viewHolderItemClickListener;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.album_title);
             photosList = (RecyclerView) itemView.findViewById(R.id.photos_list);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(viewHolderItemClickListener != null){
-                        viewHolderItemClickListener.onItemClicked(getAdapterPosition());
-                    }
-                }
-            });
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if(viewHolderItemClickListener != null){
+//                        viewHolderItemClickListener.onItemClicked(getAdapterPosition());
+//                    }
+//                }
+//            });
         }
 
-        interface OnAlbumViewHolderItemClickListener{
-            void onItemClicked(int position);
-        }
-
-        void setOnAlbumViewHolderListener(OnAlbumViewHolderItemClickListener viewHolderListener){
-            this.viewHolderItemClickListener = viewHolderListener;
-        }
+//        interface OnAlbumViewHolderItemClickListener{
+//            void onItemClicked(int position);
+//        }
+//
+//        void setOnAlbumViewHolderListener(OnAlbumViewHolderItemClickListener viewHolderListener){
+//            this.viewHolderItemClickListener = viewHolderListener;
+//        }
     }
 }

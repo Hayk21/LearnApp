@@ -17,14 +17,14 @@ import java.util.List;
  */
 
 public class AdapterForUsers extends RecyclerView.Adapter<AdapterForUsers.ViewHolder> {
-    List<User> list;
-    onAdapterItemClickListener adapterItemClickListener;
+    private List<User> list;
+    private onAdapterItemClickListener adapterItemClickListener;
 
     public AdapterForUsers(){
         list = new ArrayList<>();
     }
 
-    public void addItems(List<User> list){
+    public void updateList(List<User> list){
         this.list = list;
         notifyDataSetChanged();
     }
@@ -65,10 +65,10 @@ public class AdapterForUsers extends RecyclerView.Adapter<AdapterForUsers.ViewHo
         TextView userName,userEmail;
         onViewHolderItemClickListener viewHolderItemClickListener;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
-            userName = (TextView) itemView.findViewById(R.id.username_place);
-            userEmail = (TextView) itemView.findViewById(R.id.useremail_place);
+            userName = itemView.findViewById(R.id.username_place);
+            userEmail = itemView.findViewById(R.id.useremail_place);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

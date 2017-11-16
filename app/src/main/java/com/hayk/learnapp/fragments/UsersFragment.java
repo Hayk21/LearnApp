@@ -5,15 +5,18 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.hayk.learnapp.R;
 import com.hayk.learnapp.adapter.AdapterForUsers;
-import com.hayk.learnapp.application.ApplicationClass;
+import com.hayk.learnapp.application.AppController;
+import com.hayk.learnapp.interfaces.OnCurrentFragmentChangedListener;
 import com.hayk.learnapp.rest.User;
 
 import java.util.List;
@@ -24,16 +27,17 @@ import retrofit.Response;
 
 
 public class UsersFragment extends Fragment {
-    RecyclerView listOfUsers;
-    RecyclerView.LayoutManager manager;
-    AdapterForUsers adapterForUsers;
-    UserClickListener userClickListener;
-    User user;
+    private AdapterForUsers adapterForUsers;
+    private UserClickListener userClickListener;
+    private SwipeRefreshLayout refresh;
+    private OnCurrentFragmentChangedListener onCurrentFragmentChanged;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         userClickListener = (UserClickListener) context;
+        onCurrentFragmentChanged = (OnCurrentFragmentChangedListener) context;
+        onCurrentFragmentChanged.onFragmentAttach("Users");
 
     }
 
@@ -41,7 +45,9 @@ public class UsersFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         userClickListener = null;
-        adapterForUsers = null;
+        adapterForUsers.setOnAdapterListener(null);
+        onCurrentFragmentChanged.onFragmentDetach();
+        onCurrentFragmentChanged = null;
     }
 
 
@@ -53,14 +59,14 @@ public class UsersFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        init();
+        init(view);
     }
 
-    private void init(){
-        listOfUsers = (RecyclerView)getActivity().findViewById(R.id.users_list);
-        manager = new LinearLayoutManager(getActivity());
+    private void init(View view){
+        refresh = view.findViewById(R.id.swiperefresh);
+        RecyclerView listOfUsers = view.findViewById(R.id.users_list);
         adapterForUsers = new AdapterForUsers();
-        listOfUsers.setLayoutManager(manager);
+        listOfUsers.setLayoutManager(new LinearLayoutManager(getActivity()));
         listOfUsers.setAdapter(adapterForUsers);
         adapterForUsers.setOnAdapterListener(new AdapterForUsers.onAdapterItemClickListener() {
             @Override
@@ -68,6 +74,15 @@ public class UsersFragment extends Fragment {
                 if(userClickListener != null){
                     userClickListener.onUserClicked(user.getId());
                 }
+            }
+        });
+
+        getUsers();
+
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getUsers();
             }
         });
 
@@ -104,23 +119,23 @@ public class UsersFragment extends Fragment {
 //        });
 //        RequestsController.getInstance(getActivity()).addToRequestQueue(request);
 
+    }
 
-
-
-        Call<List<User>> users = ((ApplicationClass)getActivity().getApplication()).getServerAPI().getUsers();
+    private void getUsers(){
+        Call<List<User>> users = AppController.getServerAPI().getUsers();
 
         users.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Response<List<User>> response) {
-                adapterForUsers.addItems(response.body());
+                adapterForUsers.updateList(response.body());
+                refresh.setRefreshing(false);
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     public interface UserClickListener {

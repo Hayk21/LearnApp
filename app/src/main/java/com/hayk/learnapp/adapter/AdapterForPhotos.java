@@ -19,16 +19,16 @@ import java.util.List;
  */
 
 public class AdapterForPhotos extends RecyclerView.Adapter<AdapterForPhotos.ViewHolder>{
-    Context context;
-    List<Photo> list;
-    OnPhotoAdapterItemClickListener adapterItemClickListener;
+    private Context context;
+    private List<Photo> list;
+//    OnPhotoAdapterItemClickListener adapterItemClickListener;
 
     public AdapterForPhotos(Context context){
         this.context = context;
         list = new ArrayList<>();
     }
 
-    public void addItems(List<Photo> list){
+    public void updateList(List<Photo> list){
         this.list = list;
         notifyDataSetChanged();
     }
@@ -41,14 +41,14 @@ public class AdapterForPhotos extends RecyclerView.Adapter<AdapterForPhotos.View
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.setOnPhotoViewHolderListener(new ViewHolder.OnPhotoViewHolderItemClickListener() {
-            @Override
-            public void onItemClicked(int position) {
-                if(adapterItemClickListener != null){
-                    adapterItemClickListener.onItemClicked(list.get(position));
-                }
-            }
-        });
+//        holder.setOnPhotoViewHolderListener(new ViewHolder.OnPhotoViewHolderItemClickListener() {
+//            @Override
+//            public void onItemClicked(int position) {
+//                if(adapterItemClickListener != null){
+//                    adapterItemClickListener.onItemClicked(list.get(position));
+//                }
+//            }
+//        });
         if(list.get(position).getThumbnailUrl() != null) {
             Picasso.with(context).load(list.get(position).getThumbnailUrl()).into(holder.photo);
         }else {
@@ -61,38 +61,38 @@ public class AdapterForPhotos extends RecyclerView.Adapter<AdapterForPhotos.View
         return list.size();
     }
 
-    public interface OnPhotoAdapterItemClickListener{
-        void onItemClicked(Photo photo);
-    }
-
-    public void setOnAdapterListener(OnPhotoAdapterItemClickListener adapterListener){
-        this.adapterItemClickListener = adapterListener;
-    }
+//    public interface OnPhotoAdapterItemClickListener{
+//        void onItemClicked(Photo photo);
+//    }
+//
+//    public void setOnAdapterListener(OnPhotoAdapterItemClickListener adapterListener){
+//        this.adapterItemClickListener = adapterListener;
+//    }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView photo;
-        OnPhotoViewHolderItemClickListener viewHolderItemClickListener;
+//        OnPhotoViewHolderItemClickListener viewHolderItemClickListener;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
             photo = (ImageView) itemView.findViewById(R.id.photo_place);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(viewHolderItemClickListener != null){
-                        viewHolderItemClickListener.onItemClicked(getAdapterPosition());
-                    }
-                }
-            });
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if(viewHolderItemClickListener != null){
+//                        viewHolderItemClickListener.onItemClicked(getAdapterPosition());
+//                    }
+//                }
+//            });
         }
 
-        interface OnPhotoViewHolderItemClickListener{
-            void onItemClicked(int position);
-        }
-
-        void setOnPhotoViewHolderListener(OnPhotoViewHolderItemClickListener viewHolderListener){
-            this.viewHolderItemClickListener = viewHolderListener;
-        }
+//        interface OnPhotoViewHolderItemClickListener{
+//            void onItemClicked(int position);
+//        }
+//
+//        void setOnPhotoViewHolderListener(OnPhotoViewHolderItemClickListener viewHolderListener){
+//            this.viewHolderItemClickListener = viewHolderListener;
+//        }
     }
 }
