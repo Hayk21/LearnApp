@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hayk.learnapp.R;
+import com.hayk.learnapp.other.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -53,7 +54,9 @@ public class AdapterForContacts extends RecyclerView.Adapter<AdapterForContacts.
         });
         holder.userName.setText(list.get(position).getAllName());
         if(list.get(position).getImg() != null) {
-            Picasso.with(context).load(list.get(position).getImg()).into(holder.img);
+            Picasso.with(context).load(list.get(position).getImg()).transform(new CircleTransform()).into(holder.img);
+        }else {
+            Picasso.with(context).load(R.drawable.human).transform(new CircleTransform()).into(holder.img);
         }
     }
 

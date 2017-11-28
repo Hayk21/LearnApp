@@ -2,6 +2,9 @@ package com.hayk.learnapp.application;
 
 import android.app.Application;
 
+import com.hayk.learnapp.activitys.MainActivity;
+import com.hayk.learnapp.database.DBFunctions;
+import com.hayk.learnapp.other.Utils;
 import com.hayk.learnapp.rest.RESTHelper;
 import com.hayk.learnapp.rest.ServerAPI;
 
@@ -18,6 +21,9 @@ public class AppController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (getSharedPreferences(MainActivity.APP_PREF,MODE_PRIVATE).getBoolean(MainActivity.KEY_FOR_LOG,false) && Utils.getInstance(this).getConnectivity()) {
+            DBFunctions.getInstance(this).updateData();
+        }
     }
 
     public static synchronized ServerAPI getServerAPI(){
@@ -30,6 +36,4 @@ public class AppController extends Application {
         }
         return serverAPI;
     }
-
-
 }

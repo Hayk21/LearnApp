@@ -9,6 +9,7 @@ import android.os.Parcelable;
  */
 
 public class ContactObject implements Parcelable {
+    private String id;
     private String allName;
     private String name;
     private String lastName;
@@ -16,7 +17,8 @@ public class ContactObject implements Parcelable {
     private String email;
     private Uri img;
 
-    public ContactObject(String allName,String name,String lastName,String number,String email,Uri img){
+    public ContactObject(String id,String allName,String name,String lastName,String number,String email,Uri img){
+        this.id = id;
         this.allName = allName;
         this.name = name;
         this.lastName = lastName;
@@ -26,6 +28,7 @@ public class ContactObject implements Parcelable {
     }
 
     protected ContactObject(Parcel in) {
+        id = in.readString();
         allName = in.readString();
         name = in.readString();
         lastName = in.readString();
@@ -45,6 +48,14 @@ public class ContactObject implements Parcelable {
             return new ContactObject[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getNumber() {
         return number;
@@ -101,6 +112,7 @@ public class ContactObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
         parcel.writeString(allName);
         parcel.writeString(name);
         parcel.writeString(lastName);

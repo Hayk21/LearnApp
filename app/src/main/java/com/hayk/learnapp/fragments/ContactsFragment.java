@@ -2,16 +2,14 @@ package com.hayk.learnapp.fragments;
 
 
 import android.Manifest;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,15 +23,18 @@ import com.hayk.learnapp.R;
 import com.hayk.learnapp.adapter.AdapterForContacts;
 import com.hayk.learnapp.adapter.ContactObject;
 import com.hayk.learnapp.interfaces.OnCurrentFragmentChangedListener;
+import com.hayk.learnapp.other.ContactsHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ContactsFragment extends Fragment {
+    private static final int CONTACTS_PERMISION_REQUEST = 1;
     private AdapterForContacts adapterForContacts;
     private OnCurrentFragmentChangedListener currentFragmentChangedListener;
     private OnContactItemClickedListener onContactItemClickedListener;
+    List<ContactObject> list = new ArrayList<>();
 
     @Override
     public void onAttach(Context context) {
@@ -68,7 +69,9 @@ public class ContactsFragment extends Fragment {
             }
         });
         listContacts.setAdapter(adapterForContacts);
-        new MyTask().execute();
+        if(takePermision()) {
+            new ContactsGiving().execute();
+        }
     }
 
     @Override
@@ -76,87 +79,49 @@ public class ContactsFragment extends Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
     }
 
-    //    private void getContactList(Cursor cur) {
-//
-//        if (cur != null && cur.getCount() > 0) {
-//            while (cur.moveToNext()) {
-//                Cursor emailCursor = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, email + " = ?", new String[]{id}, null);
-//                if (emailCursor != null && emailCursor.moveToFirst()) {
-//                    String name = ContactsContract.Contacts.DISPLAY_NAME;
-//                    String Name = cur.getString(cur.getColumnIndex(
-//                            name));
-//
-//                    String uri = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
-//                    Uri uri2 = null;
-//                    if (uri != null) {
-//                        uri2 = Uri.parse(uri);
-//                    }
-//
-//                    list.add(new ContactObject(Name, uri2));
-//                }
-//                if ((emailCursor != null)) {
-//                    emailCursor.close();
-//                }
-//            }
-//        }
-//        if (cur != null) {
-//            cur.close();
-//        }
-//    }
+    private boolean takePermision() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS},
+                        CONTACTS_PERMISION_REQUEST);
+            }
+        } else {
+            return true;
+        }
+        return false;
+    }
 
-    private class MyTask extends AsyncTask {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == 1){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                new ContactsGiving().execute();
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class ContactsGiving extends AsyncTask{
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            String allName, firstName, lastName, number, email, photo;
-            Uri parsedPhoto;
-            List<ContactObject> list = new ArrayList<>();
-            String ID = ContactsContract.Contacts._ID;
-            ContentResolver cr = getActivity().getContentResolver();
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions((Activity) getActivity(),
-                        new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS},
-                        1);
-            } else {
-                Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-                        null, null, null, null);
-                if (cur != null && cur.getCount() > 0) {
-                    while (cur.moveToNext()) {
-                        number = null;
-                        Cursor emailCursor = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{cur.getString(cur.getColumnIndex(ID))}, null);
-                        if (emailCursor != null && emailCursor.moveToFirst()) {
-                            email = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                            Cursor numberCursor = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{cur.getString(cur.getColumnIndex(ID))}, null);
-                            if(numberCursor != null && numberCursor.moveToFirst()){
-                                number = numberCursor.getString(numberCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                                numberCursor.close();
-                            }
-                            Cursor dataCursor = cr.query(ContactsContract.Data.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{cur.getString(cur.getColumnIndex(ID))}, null);
-                            if (dataCursor != null && dataCursor.moveToFirst()) {
-                                allName = dataCursor.getString((dataCursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)));
-                                photo = dataCursor.getString((dataCursor.getColumnIndex(ContactsContract.Data.PHOTO_URI)));
-                                dataCursor.moveToNext();
-                                firstName = dataCursor.getString(dataCursor.getColumnIndex(ContactsContract.Data.DATA2));
-                                lastName = dataCursor.getString(dataCursor.getColumnIndex(ContactsContract.Data.DATA3));
-                                parsedPhoto = null;
-                                if (photo != null) {
-                                    parsedPhoto = Uri.parse(photo);
-                                }
-                                list.add(new ContactObject(allName, firstName, lastName, number, email, parsedPhoto));
-                                dataCursor.close();
-                            }
-                            emailCursor.close();
-                        }
-                    }
-                    cur.close();
-                }
-            }
-            return list;
+            return new ContactsHelper(getActivity()).getContactsList();
         }
 
         @Override
         protected void onPostExecute(Object o) {
+            list = ((List<ContactObject>)o);
             adapterForContacts.updateList((List<ContactObject>) o);
+//            String name = "Ani";
+//            Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI,name);
+//            try {
+//                new ContactsHelper(getActivity()).updateData(uri);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            } catch (OperationApplicationException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 

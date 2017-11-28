@@ -5,24 +5,35 @@ package com.hayk.learnapp.rest;
  */
 
 public class Album {
-    private int userId;
-    private int id;
+    private String userId;
+    private String id;
     private String title;
 
-    public int getUserId() {
-        return userId;
+    public Album(){
+
     }
 
-    public void setUserId(int userId) {
+    public Album(String userId, String id, String title) {
         this.userId = userId;
+        this.id = id;
+        this.title = title;
     }
 
-    public int getId() {
+
+    public void setID(String id) {
+        this.id = id;
+    }
+
+    public String getID() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getTitle() {

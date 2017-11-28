@@ -15,11 +15,13 @@ import android.widget.TextView;
 import com.hayk.learnapp.R;
 import com.hayk.learnapp.adapter.AdapterForOption;
 import com.hayk.learnapp.adapter.ContactObject;
+import com.hayk.learnapp.database.DBFunctions;
 import com.hayk.learnapp.fragments.AlbumsFragment;
 import com.hayk.learnapp.fragments.ContactsFragment;
 import com.hayk.learnapp.fragments.UserPageFragment;
 import com.hayk.learnapp.fragments.UsersFragment;
 import com.hayk.learnapp.interfaces.OnCurrentFragmentChangedListener;
+import com.hayk.learnapp.other.Utils;
 
 import java.util.Stack;
 
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements UsersFragment.Use
     }
 
     private void init() {
+
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -122,6 +125,9 @@ public class MainActivity extends AppCompatActivity implements UsersFragment.Use
         if (resultCode == RESULT_OK) {
             init();
             setListeners();
+            if(Utils.getInstance(this).getConnectivity()) {
+                DBFunctions.getInstance(this).updateData();
+            }
         } else {
             finish();
         }
@@ -142,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements UsersFragment.Use
     }
 
     @Override
-    public void onUserClicked(int id) {
+    public void onUserClicked(String id) {
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_container, AlbumsFragment.newInstance(id), ALBUMS_FRAGMENT)
@@ -151,9 +157,9 @@ public class MainActivity extends AppCompatActivity implements UsersFragment.Use
     }
 
     @Override
-    public void onFragmentAttach(String text) {
-        titlesStack.push(text);
-        title.setText(text);
+    public void onFragmentAttach(String fragmentTitle) {
+        titlesStack.push(fragmentTitle);
+        title.setText(fragmentTitle);
     }
 
     @Override

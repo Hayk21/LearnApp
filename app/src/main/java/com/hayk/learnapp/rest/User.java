@@ -5,17 +5,25 @@ package com.hayk.learnapp.rest;
  */
 
 public class User {
-    private int id;
+    private String id;
     private String name;
     private String username;
     private String email;
 
+    public User() {
+    }
 
-    public int getId() {
+    public User(String id, String name, String username, String email) {
+        this.id = id;
+        this.name = name;
+        this.username = username;
+        this.email = email;
+    }
+    public String getID() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setID(String id) {
         this.id = id;
     }
 
@@ -42,4 +50,5 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }

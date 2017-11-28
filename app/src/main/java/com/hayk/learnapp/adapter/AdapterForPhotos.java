@@ -1,6 +1,7 @@
 package com.hayk.learnapp.adapter;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,29 +9,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.hayk.learnapp.R;
-import com.hayk.learnapp.rest.Photo;
+import com.hayk.learnapp.database.DBHelper;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by User on 13.11.2017.
  */
 
-public class AdapterForPhotos extends RecyclerView.Adapter<AdapterForPhotos.ViewHolder>{
+public class AdapterForPhotos extends CursorRecyclerViewAdapter<AdapterForPhotos.ViewHolder>{
     private Context context;
-    private List<Photo> list;
 //    OnPhotoAdapterItemClickListener adapterItemClickListener;
 
-    public AdapterForPhotos(Context context){
-        this.context = context;
-        list = new ArrayList<>();
-    }
 
-    public void updateList(List<Photo> list){
-        this.list = list;
-        notifyDataSetChanged();
+    public AdapterForPhotos(Context context, Cursor cursor) {
+        super(context, cursor);
+        this.context = context;
     }
 
     @Override
@@ -39,26 +32,25 @@ public class AdapterForPhotos extends RecyclerView.Adapter<AdapterForPhotos.View
         return new ViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-//        holder.setOnPhotoViewHolderListener(new ViewHolder.OnPhotoViewHolderItemClickListener() {
-//            @Override
-//            public void onItemClicked(int position) {
-//                if(adapterItemClickListener != null){
-//                    adapterItemClickListener.onItemClicked(list.get(position));
-//                }
-//            }
-//        });
-        if(list.get(position).getThumbnailUrl() != null) {
-            Picasso.with(context).load(list.get(position).getThumbnailUrl()).into(holder.photo);
-        }else {
-            Picasso.with(context).load(list.get(position).getUrl()).into(holder.photo);
-        }
-    }
+//    @Override
+//    public void onBindViewHolder(final ViewHolder holder, int position) {
+////        holder.setOnPhotoViewHolderListener(new ViewHolder.OnPhotoViewHolderItemClickListener() {
+////            @Override
+////            public void onItemClicked(int position) {
+////                if(adapterItemClickListener != null){
+////                    adapterItemClickListener.onItemClicked(list.get(position));
+////                }
+////            }
+////        });
+//    }
 
     @Override
-    public int getItemCount() {
-        return list.size();
+    public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+        if(cursor.getString(cursor.getColumnIndex(DBHelper.PHOTO_THUMB_URL)) != null) {
+            Picasso.with(context).load(cursor.getString(cursor.getColumnIndex(DBHelper.PHOTO_THUMB_URL))).into(viewHolder.photo);
+        }else {
+            Picasso.with(context).load(cursor.getString(cursor.getColumnIndex(DBHelper.PHOTO_URL))).into(viewHolder.photo);
+        }
     }
 
 //    public interface OnPhotoAdapterItemClickListener{

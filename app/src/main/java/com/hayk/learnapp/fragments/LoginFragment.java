@@ -27,7 +27,6 @@ public class LoginFragment extends Fragment {
     private EditText passwordEdit;
     private Button signIn;
     private boolean validName = false, validPassword = false;
-    private ConnectivityManager conectManager;
     final private String emailPattern = "[a-zA-Z0-9._-]+@+[a-z]+.+[a-z]+";
     private OnLoginEndedListener onLoginEndedListener;
 
@@ -61,7 +60,6 @@ public class LoginFragment extends Fragment {
         signIn = (Button) view.findViewById(R.id.sign_button);
         ImageView logo = (ImageView) view.findViewById(R.id.logo);
         logo.setColorFilter(getResources().getColor(R.color.white));
-        conectManager = (ConnectivityManager) getActivity().getSystemService(getActivity().CONNECTIVITY_SERVICE);
     }
 
     private void setListeners() {
@@ -150,7 +148,7 @@ public class LoginFragment extends Fragment {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
                 }
-                if (conectManager.getActiveNetworkInfo() != null) {
+                if (((ConnectivityManager)getActivity().getSystemService(getActivity().CONNECTIVITY_SERVICE)).getActiveNetworkInfo() != null) {
                     if (validName) {
                         if (validPassword) {
                             if (onLoginEndedListener != null) {
