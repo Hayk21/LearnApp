@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="128dp"
+    android:id="@+id/big_notification_root">
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:id="@+id/file_image"
+        android:src="@mipmap/default_image"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/big_notif_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/big_notif_button"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/big_notif_close"
+        android:text="Title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Title"
+        android:textStyle="italic" />
+
+    <ImageView
+        android:id="@+id/big_notif_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/big_notif_text"
+        android:layout_marginStart="40dp"
+        android:layout_toEndOf="@+id/file_image"
+        android:padding="8dp"
+        android:src="@drawable/pause_file_icon" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/notif_text"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/ic_close_black_24dp"
+        android:id="@+id/big_notif_close"/>
+
+</RelativeLayout>

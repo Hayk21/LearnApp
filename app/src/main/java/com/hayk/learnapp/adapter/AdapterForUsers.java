@@ -1,7 +1,6 @@
 package com.hayk.learnapp.adapter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,18 +8,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hayk.learnapp.R;
-import com.hayk.learnapp.database.DBHelper;
+import com.hayk.learnapp.rest.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by User on 10.11.2017.
  */
 
-public class AdapterForUsers extends CursorRecyclerViewAdapter<AdapterForUsers.ViewHolder> {
+public class AdapterForUsers extends RecyclerView.Adapter<AdapterForUsers.ViewHolder> {
     private onAdapterItemClickListener adapterItemClickListener;
 
-    public AdapterForUsers(Context context, Cursor cursor) {
-        super(context, cursor);
+    public AdapterForUsers(Context context) {
+        list = new ArrayList<>();
+        this.context = context;
     }
+
+    List<User> list;
+    Context context;
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -28,23 +34,31 @@ public class AdapterForUsers extends CursorRecyclerViewAdapter<AdapterForUsers.V
         return new ViewHolder(view);
     }
 
-
-
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final Cursor cursor) {
-        viewHolder.setOnViewHolderListener(new ViewHolder.onViewHolderItemClickListener() {
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.setOnViewHolderListener(new ViewHolder.onViewHolderItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 if(adapterItemClickListener != null){
-                    adapterItemClickListener.onItemClicked(cursor.getString(cursor.getColumnIndex(DBHelper.ID)));
+                    adapterItemClickListener.onItemClicked(list.get(position).getId());
                 }}
         });
-        viewHolder.userName.setText(cursor.getString(cursor.getColumnIndex(DBHelper.USER_NICK_NAME)));
-        viewHolder.userEmail.setText(cursor.getString(cursor.getColumnIndex(DBHelper.USER_EMAIL)));
+        holder.userName.setText(list.get(position).getUsername());
+        holder.userEmail.setText(list.get(position).getEmail());
+    }
+
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    public void updateList(List<User> list){
+        this.list = list;
+        notifyDataSetChanged();
     }
 
     public interface onAdapterItemClickListener{
-        void onItemClicked(String id);
+        void onItemClicked(Long id);
     }
 
     public void setOnAdapterListener(AdapterForUsers.onAdapterItemClickListener adapterListener){

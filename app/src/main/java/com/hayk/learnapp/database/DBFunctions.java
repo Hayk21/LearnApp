@@ -1,10 +1,7 @@
 package com.hayk.learnapp.database;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.hayk.learnapp.application.AppController;
@@ -27,156 +24,110 @@ import retrofit.Response;
 public class DBFunctions {
     public static final String DB_UPDATED_ACTION = "db_updated_action";
     public static final String ALBUM_UPDATED_ACTION = "album_updated_action";
-    private static DBHelper db;
-    private static SQLiteDatabase sqLiteDatabase;
     private Context context;
     private static DBFunctions dbFunctions;
+    private static RMDatabase rmDatabase;
     private List<User> serverUsers;
     private List<Album> serverAlbums;
     private List<Photo> serverPhotos;
-    private String userID;
-    private String[] albumID;
+    private Long userID;
+    private Long[] albumID;
 
     public static synchronized DBFunctions getInstance(Context context) {
         if (dbFunctions == null) {
             dbFunctions = new DBFunctions(context);
-            sqLiteDatabase = db.getWritableDatabase();
         }
         return dbFunctions;
     }
 
     private DBFunctions(Context context) {
         this.context = context;
-        db = new DBHelper(context);
+        rmDatabase = RMDatabase.getInstance(context);
     }
 
     public synchronized void updateData() {
         getServerUsers();
     }
 
-    public void updateAlbums(String userID) {
+    public void updateAlbums(long userID) {
         getServerAlbums(userID);
     }
 
-    public SQLiteDatabase getDatabase(){
-        return sqLiteDatabase;
-    }
 
     private void updateUsers() {
-        getSqliteDB();
         List<User> databaseUsers = getDatabaseUsers();
         if (databaseUsers.size() == 0) {
-            insertUsers(serverUsers);
+            rmDatabase.userDao().insertUsers(serverUsers);
             return;
         }
-
         boolean changed;
-        ContentValues contentValues = new ContentValues();
-        for (User serverUser : serverUsers) {
+        rmDatabase.userDao().insertOrUpdateUsers(serverUsers);
+        for (User databaseUser : databaseUsers) {
             changed = false;
-            contentValues.clear();
-            contentValues.put(DBHelper.USER_REAL_NAME, serverUser.getName());
-            contentValues.put(DBHelper.USER_NICK_NAME, serverUser.getUsername());
-            contentValues.put(DBHelper.USER_EMAIL, serverUser.getEmail());
-            for (User databaseUser : databaseUsers) {
-                if (serverUser.getID().equals(databaseUser.getID())) {
+            for (User serverUser : serverUsers) {
+                if (serverUser.getId() == databaseUser.getId()) {
                     //update current user from server in database
-                    sqLiteDatabase.update(DBHelper.USER_TABLE, contentValues, DBHelper.ID + "=" + databaseUser.getID(), null);
-                    databaseUsers.remove(databaseUser);
                     changed = true;
                     break;
                 }
             }
             if (!changed) {
                 //insert current user from server in database
-                contentValues.put(DBHelper.ID, serverUser.getID());
-                sqLiteDatabase.insert(DBHelper.USER_TABLE, null, contentValues);
+                rmDatabase.userDao().deleteUser(databaseUser);
             }
         }
-
-        if (databaseUsers.size() != 0) {
-            //delete that users from database,which dont have server
-            String[] userIds = new String[databaseUsers.size()];
-            for (int i = 0; i < databaseUsers.size(); i++) {
-                userIds[i] = databaseUsers.get(i).getID();
-            }
-            deleteUsers(userIds);
-        }
+//        List<Album> albums = daoSession.getAlbumDao().queryBuilder().where(AlbumDao.Properties.UserId.eq(userIds)).list();
+//        daoSession.getAlbumDao().deleteInTx(albums);
+//        List<Long> albumsIds = new ArrayList<>();
+//        for (Album album:albums){
+//            albumsIds.add(album.getId());
+//        }
+//        List<Photo> photos = daoSession.getPhotoDao().queryBuilder().where(PhotoDao.Properties.AlbumId.eq(albumsIds)).list();
+//        daoSession.getPhotoDao().deleteInTx(photos);
     }
 
     private void updateAlbums(List<Album> databaseAlbums) {
-        getSqliteDB();
         if (databaseAlbums.size() == 0) {
-            insertAlbums(serverAlbums);
+            rmDatabase.albumDao().insertAlbums(serverAlbums);
             return;
         }
 
         boolean changed;
-        ContentValues contentValues = new ContentValues();
-        for (Album serverAlbum : serverAlbums) {
+        rmDatabase.albumDao().insertOrUpdateAlbums(serverAlbums);
+        for (Album databaseAlbum :databaseAlbums) {
             changed = false;
-            contentValues.clear();
-            contentValues.put(DBHelper.USER_ID, serverAlbum.getUserId());
-            contentValues.put(DBHelper.ALBUM_TITLE, serverAlbum.getTitle());
-            for (Album databaseAlbum : databaseAlbums) {
-                if (serverAlbum.getID().equals(databaseAlbum.getID())) {
-                    sqLiteDatabase.update(DBHelper.ALBUM_TABLE, contentValues, DBHelper.ID + "=" + databaseAlbum.getID(), null);
-                    databaseAlbums.remove(databaseAlbum);
+            for (Album serverAlbum : serverAlbums) {
+                if (serverAlbum.getId() == (databaseAlbum.getId())) {
                     changed = true;
                     break;
                 }
             }
             if (!changed) {
-                contentValues.put(DBHelper.ID, serverAlbum.getID());
-                sqLiteDatabase.insert(DBHelper.ALBUM_TABLE, null, contentValues);
+                rmDatabase.albumDao().deleteAlbum(databaseAlbum);
             }
         }
-
-        if (databaseAlbums.size() != 0) {
-            String[] albumsIds = new String[databaseAlbums.size()];
-            for (int i = 0; i < databaseAlbums.size(); i++) {
-                albumsIds[i] = databaseAlbums.get(i).getID();
-            }
-            deleteAlbums(albumsIds);
-        }
+//        daoSession.getPhotoDao().deleteInTx(daoSession.getPhotoDao().queryBuilder().where(PhotoDao.Properties.AlbumId.eq(albumsIds)).list());
     }
 
     private void updatePhotos(List<Photo> databasePhotos) {
-        getSqliteDB();
         if (databasePhotos.size() == 0) {
-            insertPhotos(serverPhotos);
+            rmDatabase.photoDao().insertPhotos(serverPhotos);
             return;
         }
 
         boolean changed;
-        ContentValues contentValues = new ContentValues();
-        for (Photo serverPhoto : serverPhotos) {
+        rmDatabase.photoDao().insertOrUpdateAlbums(serverPhotos);
+        for (Photo databasePhoto : databasePhotos) {
             changed = false;
-            contentValues.clear();
-            contentValues.put(DBHelper.ALBUM_ID, serverPhoto.getAlbumId());
-            contentValues.put(DBHelper.PHOTO_TITLE, serverPhoto.getTitle());
-            contentValues.put(DBHelper.PHOTO_URL, serverPhoto.getUrl());
-            contentValues.put(DBHelper.PHOTO_THUMB_URL, serverPhoto.getThumbnailUrl());
-            for (Photo databasePhoto : databasePhotos) {
-                if (serverPhoto.getID().equals(databasePhoto.getID())) {
-                    sqLiteDatabase.update(DBHelper.PHOTO_TABLE, contentValues, DBHelper.ID + "=" + databasePhoto.getID(), null);
-                    databasePhotos.remove(databasePhoto);
+            for (Photo serverPhoto : serverPhotos) {
+                if (serverPhoto.getID() == databasePhoto.getID()) {
                     changed = true;
                     break;
                 }
             }
             if (!changed) {
-                contentValues.put(DBHelper.ID, serverPhoto.getID());
-                sqLiteDatabase.insert(DBHelper.PHOTO_TABLE, null, contentValues);
+                rmDatabase.photoDao().deletePhoto(databasePhoto);
             }
-        }
-
-        if (databasePhotos.size() != 0) {
-            String[] photosIds = new String[databasePhotos.size()];
-            for (int i = 0; i < databasePhotos.size(); i++) {
-                photosIds[i] = databasePhotos.get(i).getID();
-            }
-            deletePhotos(photosIds);
         }
     }
 
@@ -187,9 +138,9 @@ public class DBFunctions {
             @Override
             public void onResponse(Response<List<User>> response) {
                 serverUsers = response.body();
-                List<String> usersIds = new ArrayList<>();
+                List<Long> usersIds = new ArrayList<>();
                 for (User user : serverUsers) {
-                    usersIds.add(user.getID());
+                    usersIds.add(user.getId());
                 }
                 getServerAlbums(usersIds);
             }
@@ -205,16 +156,16 @@ public class DBFunctions {
         });
     }
 
-    private void getServerAlbums(final List<String> userIds) {
+    private void getServerAlbums(final List<Long> userIds) {
         Call<List<Album>> albums = AppController.getServerAPI().getAlbums(userIds);
 
         albums.enqueue(new Callback<List<Album>>() {
             @Override
             public void onResponse(final Response<List<Album>> response) {
                 serverAlbums = response.body();
-                List<String> albumIds = new ArrayList<>();
+                List<Long> albumIds = new ArrayList<>();
                 for (Album album : serverAlbums) {
-                    albumIds.add(album.getID());
+                    albumIds.add(album.getId());
                 }
                 getServerPhotos(albumIds);
             }
@@ -230,16 +181,16 @@ public class DBFunctions {
         });
     }
 
-    private void getServerAlbums(final String userId) {
+    private void getServerAlbums(final Long userId) {
         Call<List<Album>> albums = AppController.getServerAPI().getAlbums(userId);
 
         albums.enqueue(new Callback<List<Album>>() {
             @Override
             public void onResponse(final Response<List<Album>> response) {
                 serverAlbums = response.body();
-                String[] array = new String[serverAlbums.size()];
+                Long[] array = new Long[serverAlbums.size()];
                 for (int i = 0; i < serverAlbums.size(); i++) {
-                    array[i] = serverAlbums.get(i).getID();
+                    array[i] = serverAlbums.get(i).getId();
                 }
                 userID = userId;
                 getServerPhotos(array);
@@ -256,7 +207,7 @@ public class DBFunctions {
         });
     }
 
-    private void getServerPhotos(final List<String> albumIds) {
+    private void getServerPhotos(final List<Long> albumIds) {
         Call<List<Photo>> photos = AppController.getServerAPI().getPhotos(albumIds);
 
         photos.enqueue(new Callback<List<Photo>>() {
@@ -277,7 +228,7 @@ public class DBFunctions {
         });
     }
 
-    private void getServerPhotos(final String[] albumId) {
+    private void getServerPhotos(final Long[] albumId) {
         Call<List<Photo>> photos = AppController.getServerAPI().getPhotos(albumId);
 
         photos.enqueue(new Callback<List<Photo>>() {
@@ -299,158 +250,132 @@ public class DBFunctions {
         });
     }
 
-    private List<User> getDatabaseUsers() {
-        getSqliteDB();
-        List<User> usersList = new ArrayList<>();
-        Cursor userCursor = sqLiteDatabase.query(DBHelper.USER_TABLE, null, null, null, null, null, null);
-        if (userCursor != null && userCursor.moveToFirst()) {
-            do {
-                usersList.add(new User(userCursor.getString(userCursor.getColumnIndex(DBHelper.ID)), userCursor.getString(userCursor.getColumnIndex(DBHelper.USER_REAL_NAME)), userCursor.getString(userCursor.getColumnIndex(DBHelper.USER_NICK_NAME)), userCursor.getString(userCursor.getColumnIndex(DBHelper.USER_EMAIL))));
-            } while (userCursor.moveToNext());
-            userCursor.close();
-        }
-        return usersList;
+
+//    private List<Album> getDatabaseAlbums(String userId) {
+//        getSqliteDB();
+//        List<Album> albumsList = new ArrayList<>();
+//        Cursor albumCursor = sqLiteDatabase.query(DBHelper.ALBUM_TABLE, null, DBHelper.USER_ID + "=" + userId, null, null, null, null);
+//        if (albumCursor != null && albumCursor.moveToFirst()) {
+//            do {
+//                albumsList.add(new Album(albumCursor.getString(albumCursor.getColumnIndex(DBHelper.USER_ID)), albumCursor.getString(albumCursor.getColumnIndex(DBHelper.ID)), albumCursor.getString(albumCursor.getColumnIndex(DBHelper.ALBUM_TITLE))));
+//            } while (albumCursor.moveToNext());
+//            albumCursor.close();
+//        }
+//        return albumsList;
+//    }
+//
+//    private List<Photo> getDatabasePhotos() {
+//        getSqliteDB();
+//        List<Photo> photosList = new ArrayList<>();
+//        Cursor photosCursor = sqLiteDatabase.query(DBHelper.PHOTO_TABLE, null, null, null, null, null, null);
+//        if (photosCursor != null && photosCursor.moveToFirst()) {
+//            do {
+//                photosList.add(new Photo(photosCursor.getString(photosCursor.getColumnIndex(DBHelper.ALBUM_ID)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.ID)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_TITLE)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_URL)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_THUMB_URL))));
+//            } while (photosCursor.moveToNext());
+//            photosCursor.close();
+//        }
+//        return photosList;
+//    }
+//
+//    private List<Photo> getDatabasePhotos(String[] albumId) {
+//        getSqliteDB();
+//        List<Photo> photosList = new ArrayList<>();
+//        for (int i =0;i<albumId.length;i++) {
+//            Cursor photosCursor = sqLiteDatabase.query(DBHelper.PHOTO_TABLE, null, DBHelper.ALBUM_ID + "=" + albumId[i], null, null, null, null);
+//            if (photosCursor != null && photosCursor.moveToFirst()) {
+//                do {
+//                    photosList.add(new Photo(photosCursor.getString(photosCursor.getColumnIndex(DBHelper.ALBUM_ID)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.ID)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_TITLE)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_URL)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_THUMB_URL))));
+//                } while (photosCursor.moveToNext());
+//                photosCursor.close();
+//            }
+//        }
+//        return photosList;
+//    }
+//
+//    public Cursor getUsersCursor(){
+//        getSqliteDB();
+//        return sqLiteDatabase.query(DBHelper.USER_TABLE,null,null,null,null,null,null);
+//    }
+//
+//    public Cursor getAlbumsCursor(String userId){
+//        getSqliteDB();
+//        return sqLiteDatabase.query(DBHelper.ALBUM_TABLE,null,DBHelper.USER_ID + "=" + userId,null,null,null,null);
+//    }
+//
+//    public Cursor getPhotosCursor(String albumId){
+//        getSqliteDB();
+//        return sqLiteDatabase.query(DBHelper.PHOTO_TABLE,null,DBHelper.ALBUM_ID + "=" + albumId,null,null,null,null);
+//    }
+//
+//    private void insertPhotos(List<Photo> photosList) {
+//        getSqliteDB();
+//        ContentValues contentValues = new ContentValues();
+//        for (Photo photo : photosList) {
+//            contentValues.put(DBHelper.ID, photo.getID());
+//            contentValues.put(DBHelper.ALBUM_ID, ((Photo) photo).getAlbumId());
+//            contentValues.put(DBHelper.PHOTO_TITLE, ((Photo) photo).getTitle());
+//            contentValues.put(DBHelper.PHOTO_URL, ((Photo) photo).getUrl());
+//            contentValues.put(DBHelper.PHOTO_THUMB_URL, ((Photo) photo).getThumbnailUrl());
+//            sqLiteDatabase.insert(DBHelper.PHOTO_TABLE, null, contentValues);
+//            contentValues.clear();
+//        }
+//    }
+//
+//    private void deleteUsers(String[] userIds) {
+//        getSqliteDB();
+//        sqLiteDatabase.delete(DBHelper.USER_TABLE, DBHelper.ID + "=?", userIds);
+//        deleteAlbums(userIds);
+//    }
+//
+//    private void deleteAlbums(String[] userIds) {
+//        getSqliteDB();
+//        Cursor albumsCursor = sqLiteDatabase.query(DBHelper.ALBUM_TABLE, new String[]{DBHelper.ID}, DBHelper.USER_ID + "=?", userIds, null, null, null);
+//        if (albumsCursor != null && albumsCursor.moveToFirst()) {
+//            String[] albumsIds = new String[albumsCursor.getCount()];
+//            do {
+//                albumsIds[albumsCursor.getPosition()] = albumsCursor.getString(albumsCursor.getColumnIndex(DBHelper.ID));
+//            } while (albumsCursor.moveToNext());
+//            albumsCursor.close();
+//            sqLiteDatabase.delete(DBHelper.ALBUM_TABLE, DBHelper.USER_ID + "=?", userIds);
+//            deletePhotos(albumsIds);
+//        }
+//    }
+//
+//    private void deletePhotos(String[] albumsIds) {
+//        getSqliteDB();
+//        sqLiteDatabase.delete(DBHelper.PHOTO_TABLE, DBHelper.ALBUM_ID + "=?", albumsIds);
+//    }
+
+    public List<User> getDatabaseUsers(){
+        return rmDatabase.userDao().getUsers();
     }
 
-    private List<Album> getDatabaseAlbums() {
-        getSqliteDB();
-        List<Album> albumsList = new ArrayList<>();
-        Cursor albumCursor = sqLiteDatabase.query(DBHelper.ALBUM_TABLE, null, null, null, null, null, null);
-        if (albumCursor != null && albumCursor.moveToFirst()) {
-            do {
-                albumsList.add(new Album(albumCursor.getString(albumCursor.getColumnIndex(DBHelper.USER_ID)), albumCursor.getString(albumCursor.getColumnIndex(DBHelper.ID)), albumCursor.getString(albumCursor.getColumnIndex(DBHelper.ALBUM_TITLE))));
-            } while (albumCursor.moveToNext());
-            albumCursor.close();
-        }
-        return albumsList;
+    public List<Album> getDatabaseAlbums(){
+        return rmDatabase.albumDao().getAlbums();
     }
 
-    private List<Album> getDatabaseAlbums(String userId) {
-        getSqliteDB();
-        List<Album> albumsList = new ArrayList<>();
-        Cursor albumCursor = sqLiteDatabase.query(DBHelper.ALBUM_TABLE, null, DBHelper.USER_ID + "=" + userId, null, null, null, null);
-        if (albumCursor != null && albumCursor.moveToFirst()) {
-            do {
-                albumsList.add(new Album(albumCursor.getString(albumCursor.getColumnIndex(DBHelper.USER_ID)), albumCursor.getString(albumCursor.getColumnIndex(DBHelper.ID)), albumCursor.getString(albumCursor.getColumnIndex(DBHelper.ALBUM_TITLE))));
-            } while (albumCursor.moveToNext());
-            albumCursor.close();
-        }
-        return albumsList;
+    public List<Album> getDatabaseAlbums(long userId){
+        return rmDatabase.albumDao().getAlbumsByUserId(userId);
     }
 
-    private List<Photo> getDatabasePhotos() {
-        getSqliteDB();
-        List<Photo> photosList = new ArrayList<>();
-        Cursor photosCursor = sqLiteDatabase.query(DBHelper.PHOTO_TABLE, null, null, null, null, null, null);
-        if (photosCursor != null && photosCursor.moveToFirst()) {
-            do {
-                photosList.add(new Photo(photosCursor.getString(photosCursor.getColumnIndex(DBHelper.ALBUM_ID)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.ID)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_TITLE)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_URL)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_THUMB_URL))));
-            } while (photosCursor.moveToNext());
-            photosCursor.close();
-        }
-        return photosList;
+    public List<Photo> getDatabasePhotos(){
+        return rmDatabase.photoDao().getPhotos();
     }
 
-    private List<Photo> getDatabasePhotos(String[] albumId) {
-        getSqliteDB();
-        List<Photo> photosList = new ArrayList<>();
-        for (int i =0;i<albumId.length;i++) {
-            Cursor photosCursor = sqLiteDatabase.query(DBHelper.PHOTO_TABLE, null, DBHelper.ALBUM_ID + "=" + albumId[i], null, null, null, null);
-            if (photosCursor != null && photosCursor.moveToFirst()) {
-                do {
-                    photosList.add(new Photo(photosCursor.getString(photosCursor.getColumnIndex(DBHelper.ALBUM_ID)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.ID)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_TITLE)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_URL)), photosCursor.getString(photosCursor.getColumnIndex(DBHelper.PHOTO_THUMB_URL))));
-                } while (photosCursor.moveToNext());
-                photosCursor.close();
-            }
-        }
-        return photosList;
+    public List<Photo> getDatabasePhotos(long albumId){
+        return rmDatabase.photoDao().getPhotosByAlbumId(albumId);
     }
 
-    public Cursor getUsersCursor(){
-        getSqliteDB();
-        return sqLiteDatabase.query(DBHelper.USER_TABLE,null,null,null,null,null,null);
+    public void clearDatabase(){
+        rmDatabase.userDao().deleteAllUsers();
     }
-
-    public Cursor getAlbumsCursor(String userId){
-        getSqliteDB();
-        return sqLiteDatabase.query(DBHelper.ALBUM_TABLE,null,DBHelper.USER_ID + "=" + userId,null,null,null,null);
-    }
-
-    public Cursor getPhotosCursor(String albumId){
-        getSqliteDB();
-        return sqLiteDatabase.query(DBHelper.PHOTO_TABLE,null,DBHelper.ALBUM_ID + "=" + albumId,null,null,null,null);
-    }
-
-    private void insertUsers(List<User> usersList) {
-        getSqliteDB();
-        ContentValues contentValues = new ContentValues();
-        for (User user : usersList) {
-            contentValues.put(DBHelper.ID, user.getID());
-            contentValues.put(DBHelper.USER_REAL_NAME, ((User) user).getName());
-            contentValues.put(DBHelper.USER_NICK_NAME, ((User) user).getUsername());
-            contentValues.put(DBHelper.USER_EMAIL, ((User) user).getEmail());
-            sqLiteDatabase.insert(DBHelper.USER_TABLE, null, contentValues);
-            contentValues.clear();
-        }
-    }
-
-    private void insertAlbums(List<Album> albumsList) {
-        getSqliteDB();
-        ContentValues contentValues = new ContentValues();
-        for (Album album : albumsList) {
-            contentValues.put(DBHelper.ID, album.getID());
-            contentValues.put(DBHelper.USER_ID, ((Album) album).getUserId());
-            contentValues.put(DBHelper.ALBUM_TITLE, ((Album) album).getTitle());
-            sqLiteDatabase.insert(DBHelper.ALBUM_TABLE, null, contentValues);
-            contentValues.clear();
-        }
-    }
-
-    private void insertPhotos(List<Photo> photosList) {
-        getSqliteDB();
-        ContentValues contentValues = new ContentValues();
-        for (Photo photo : photosList) {
-            contentValues.put(DBHelper.ID, photo.getID());
-            contentValues.put(DBHelper.ALBUM_ID, ((Photo) photo).getAlbumId());
-            contentValues.put(DBHelper.PHOTO_TITLE, ((Photo) photo).getTitle());
-            contentValues.put(DBHelper.PHOTO_URL, ((Photo) photo).getUrl());
-            contentValues.put(DBHelper.PHOTO_THUMB_URL, ((Photo) photo).getThumbnailUrl());
-            sqLiteDatabase.insert(DBHelper.PHOTO_TABLE, null, contentValues);
-            contentValues.clear();
-        }
-    }
-
-    private void deleteUsers(String[] userIds) {
-        getSqliteDB();
-        sqLiteDatabase.delete(DBHelper.USER_TABLE, DBHelper.ID + "=?", userIds);
-        deleteAlbums(userIds);
-    }
-
-    private void deleteAlbums(String[] userIds) {
-        getSqliteDB();
-        Cursor albumsCursor = sqLiteDatabase.query(DBHelper.ALBUM_TABLE, new String[]{DBHelper.ID}, DBHelper.USER_ID + "=?", userIds, null, null, null);
-        if (albumsCursor != null && albumsCursor.moveToFirst()) {
-            String[] albumsIds = new String[albumsCursor.getCount()];
-            do {
-                albumsIds[albumsCursor.getPosition()] = albumsCursor.getString(albumsCursor.getColumnIndex(DBHelper.ID));
-            } while (albumsCursor.moveToNext());
-            albumsCursor.close();
-            sqLiteDatabase.delete(DBHelper.ALBUM_TABLE, DBHelper.USER_ID + "=?", userIds);
-            deletePhotos(albumsIds);
-        }
-    }
-
-    private void deletePhotos(String[] albumsIds) {
-        getSqliteDB();
-        sqLiteDatabase.delete(DBHelper.PHOTO_TABLE, DBHelper.ALBUM_ID + "=?", albumsIds);
-    }
-
-    private void getSqliteDB(){
-        if(sqLiteDatabase == null){
-            db = new DBHelper(context);
-            sqLiteDatabase = db.getWritableDatabase();
-        }
-    }
+//
+//    private void getSqliteDB(){
+//        if(sqLiteDatabase == null){
+//            db = new DBHelper(context);
+//            sqLiteDatabase = db.getWritableDatabase();
+//        }
+//    }
 
     private class DatabaseUpdateing extends AsyncTask {
 
@@ -459,20 +384,14 @@ public class DBFunctions {
             if (serverUsers != null) {
                 updateUsers();
                 serverUsers = null;
-            } else {
-                sqLiteDatabase.delete(DBHelper.USER_TABLE, null, null);
             }
             if (serverAlbums != null) {
                 updateAlbums(getDatabaseAlbums());
                 serverAlbums = null;
-            } else {
-                sqLiteDatabase.delete(DBHelper.ALBUM_TABLE, null, null);
             }
             if (serverPhotos != null) {
                 updatePhotos(getDatabasePhotos());
                 serverPhotos = null;
-            } else {
-                sqLiteDatabase.delete(DBHelper.PHOTO_TABLE, null, null);
             }
             context.sendBroadcast(new Intent(DB_UPDATED_ACTION));
             return null;
@@ -484,12 +403,14 @@ public class DBFunctions {
         @Override
         protected Object doInBackground(Object[] objects) {
             if (serverAlbums != null) {
-                updateAlbums(getDatabaseAlbums(userID));
+                updateAlbums(rmDatabase.albumDao().getAlbumsByUserId(userID));
                 serverAlbums = null;
                 userID = null;
             }
             if (serverPhotos != null) {
-                updatePhotos(getDatabasePhotos(albumID));
+                for (int i=0;i<albumID.length;i++){
+                    updatePhotos(rmDatabase.photoDao().getPhotosByAlbumId(albumID[i]));
+                }
                 serverPhotos = null;
                 albumID = null;
             }

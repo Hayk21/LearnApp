@@ -30,7 +30,7 @@ public class AdapterForOption extends RecyclerView.Adapter<AdapterForOption.View
         list = new ArrayList<>();
         list.add(new OptionItem(R.drawable.users,context.getString(R.string.users)));
         list.add(new OptionItem(R.drawable.phone,context.getString(R.string.contacts)));
-        list.add(new OptionItem(R.drawable.image_placeholder,context.getString(R.string.page2)));
+        list.add(new OptionItem(R.drawable.media,context.getString(R.string.media_option)));
     }
 
     @Override
@@ -73,8 +73,8 @@ public class AdapterForOption extends RecyclerView.Adapter<AdapterForOption.View
 
         public ViewHolder(View itemView) {
             super(itemView);
-            icon = (ImageView) itemView.findViewById(R.id.option_icon);
-            name = (TextView) itemView.findViewById(R.id.option_name);
+            icon =  itemView.findViewById(R.id.option_icon);
+            name =  itemView.findViewById(R.id.option_name);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

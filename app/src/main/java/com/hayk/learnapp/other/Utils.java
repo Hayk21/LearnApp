@@ -27,4 +27,8 @@ public class Utils {
         }
         return false;
     }
+
+    public String getMediaFolderPath(){
+        return context.getFilesDir().toString() + "/practice media/";
+    }
 }

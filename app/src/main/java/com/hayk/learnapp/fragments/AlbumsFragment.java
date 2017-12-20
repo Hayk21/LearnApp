@@ -2,14 +2,10 @@ package com.hayk.learnapp.fragments;
 
 
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -28,7 +24,7 @@ import com.hayk.learnapp.interfaces.OnCurrentFragmentChangedListener;
 import com.hayk.learnapp.other.Utils;
 
 
-public class AlbumsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AlbumsFragment extends Fragment {
 
     private RecyclerView albumsList;
     private SwipeRefreshLayout refresh;
@@ -36,10 +32,10 @@ public class AlbumsFragment extends Fragment implements LoaderManager.LoaderCall
     private AdapterForAlbums adapterForAlbums;
     private DatabaseUpdatedReceiver databaseUpdatedReceiver = new DatabaseUpdatedReceiver();
 
-    public static AlbumsFragment newInstance(String id) {
+    public static AlbumsFragment newInstance(long id) {
 
         Bundle args = new Bundle();
-        args.putString(MainActivity.KEY_FOR_USER_ID,id);
+        args.putLong(MainActivity.KEY_FOR_USER_ID,id);
 
         AlbumsFragment fragment = new AlbumsFragment();
         fragment.setArguments(args);
@@ -87,9 +83,9 @@ public class AlbumsFragment extends Fragment implements LoaderManager.LoaderCall
         refresh = view.findViewById(R.id.swiperefresh);
         albumsList = view.findViewById(R.id.albums_list);
         albumsList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapterForAlbums = new AdapterForAlbums(getActivity(),null);
+        adapterForAlbums = new AdapterForAlbums(getActivity());
         albumsList.setAdapter(adapterForAlbums);
-        getLoaderManager().initLoader(0,null,AlbumsFragment.this);
+        adapterForAlbums.updateList(DBFunctions.getInstance(getActivity()).getDatabaseAlbums(getArguments().getLong(MainActivity.KEY_FOR_USER_ID)));
 //        new AlbumsGeting().execute();
 
 
@@ -97,28 +93,13 @@ public class AlbumsFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public void onRefresh() {
                 if (Utils.getInstance(getActivity()).getConnectivity()) {
-                    DBFunctions.getInstance(getActivity()).updateAlbums(getArguments().getString(MainActivity.KEY_FOR_USER_ID));
+                    DBFunctions.getInstance(getActivity()).updateAlbums(getArguments().getLong(MainActivity.KEY_FOR_USER_ID));
                 }else {
                     refresh.setRefreshing(false);
                     Toast.makeText(getActivity(), "Connect to Internet", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new AlbumsLoader(getActivity(),getArguments().getString(MainActivity.KEY_FOR_USER_ID));
-    }
-
-    @Override
-    public void onLoadFinished(Loader loader, Cursor cursor) {
-        adapterForAlbums.changeCursor(cursor);
-    }
-
-    @Override
-    public void onLoaderReset(Loader loader) {
-
     }
 
 //    private class AlbumsGeting extends AsyncTask{
@@ -141,23 +122,9 @@ public class AlbumsFragment extends Fragment implements LoaderManager.LoaderCall
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "OK", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Data Updated", Toast.LENGTH_SHORT).show();
             refresh.setRefreshing(false);
-            getLoaderManager().getLoader(0).forceLoad();
-        }
-    }
-
-    static private class AlbumsLoader extends CursorLoader{
-        private String userId;
-
-        public AlbumsLoader(Context context,String userId) {
-            super(context);
-            this.userId = userId;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            return DBFunctions.getInstance(getContext()).getAlbumsCursor(userId);
+            adapterForAlbums.updateList(DBFunctions.getInstance(getActivity()).getDatabaseAlbums(getArguments().getLong(MainActivity.KEY_FOR_USER_ID)));
         }
     }
 }

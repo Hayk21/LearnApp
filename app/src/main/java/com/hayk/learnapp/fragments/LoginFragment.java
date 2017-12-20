@@ -3,7 +3,6 @@ package com.hayk.learnapp.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hayk.learnapp.R;
+import com.hayk.learnapp.other.Utils;
 
 
 public class LoginFragment extends Fragment {
@@ -55,10 +55,10 @@ public class LoginFragment extends Fragment {
     }
 
     private void init(View view) {
-        nameEdit = (EditText) view.findViewById(R.id.edit_name);
-        passwordEdit = (EditText) view.findViewById(R.id.edit_password);
-        signIn = (Button) view.findViewById(R.id.sign_button);
-        ImageView logo = (ImageView) view.findViewById(R.id.logo);
+        nameEdit =  view.findViewById(R.id.edit_name);
+        passwordEdit =  view.findViewById(R.id.edit_password);
+        signIn =  view.findViewById(R.id.sign_button);
+        ImageView logo =  view.findViewById(R.id.logo);
         logo.setColorFilter(getResources().getColor(R.color.white));
     }
 
@@ -145,10 +145,9 @@ public class LoginFragment extends Fragment {
                 if (nameEdit.isFocused() || passwordEdit.isFocused()) {
                     nameEdit.clearFocus();
                     passwordEdit.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
+                    ((InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
                 }
-                if (((ConnectivityManager)getActivity().getSystemService(getActivity().CONNECTIVITY_SERVICE)).getActiveNetworkInfo() != null) {
+                if (Utils.getInstance(getActivity()).getConnectivity()) {
                     if (validName) {
                         if (validPassword) {
                             if (onLoginEndedListener != null) {

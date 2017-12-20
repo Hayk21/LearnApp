@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:id="@+id/notification_root">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:textStyle="italic"
+        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Title"
+        android:text="Title"
+        android:id="@+id/notif_text"/>
+
+    <ImageView
+        android:id="@+id/notif_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/notif_text"
+        android:padding="8dp"
+        android:src="@drawable/pause_file_icon" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/notif_text"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/ic_close_black_24dp"
+        android:id="@+id/notif_close"/>
+
+</RelativeLayout>

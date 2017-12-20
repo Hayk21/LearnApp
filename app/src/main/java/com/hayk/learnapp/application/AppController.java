@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.hayk.learnapp.activitys.MainActivity;
 import com.hayk.learnapp.database.DBFunctions;
+import com.hayk.learnapp.database.RMDatabase;
 import com.hayk.learnapp.other.Utils;
 import com.hayk.learnapp.rest.RESTHelper;
 import com.hayk.learnapp.rest.ServerAPI;
@@ -17,12 +18,14 @@ import retrofit.Retrofit;
 
 public class AppController extends Application {
     private static ServerAPI serverAPI;
+    private RMDatabase rmDatabase;
 
     @Override
     public void onCreate() {
         super.onCreate();
         if (getSharedPreferences(MainActivity.APP_PREF,MODE_PRIVATE).getBoolean(MainActivity.KEY_FOR_LOG,false) && Utils.getInstance(this).getConnectivity()) {
-            DBFunctions.getInstance(this).updateData();
+//            DBFunctions.getInstance(this).updateData();
+            DBFunctions.getInstance(getApplicationContext()).updateData();
         }
     }
 

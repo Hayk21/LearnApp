@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#DDDDDD</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#292728</color>
     <color name="editColor">#FDF8F2</color>
     <color name="hintColor">#b3b3b3</color>
     <color name="green2">#79C143</color>
@@ -10,4 +10,6 @@
     <color name="white">#ffffff</color>
     <color name="line_color">#666666</color>
     <color name="light_black">#2b2929</color>
+    <color name="black">#000000</color>
+    <color name="black2">#64000000</color>
 </resources>

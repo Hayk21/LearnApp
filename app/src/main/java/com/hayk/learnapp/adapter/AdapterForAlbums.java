@@ -1,7 +1,6 @@
 package com.hayk.learnapp.adapter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,26 +10,46 @@ import android.widget.TextView;
 
 import com.hayk.learnapp.R;
 import com.hayk.learnapp.database.DBFunctions;
-import com.hayk.learnapp.database.DBHelper;
+import com.hayk.learnapp.rest.Album;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by User on 13.11.2017.
  */
 
-public class AdapterForAlbums extends CursorRecyclerViewAdapter<AdapterForAlbums.ViewHolder> {
+public class AdapterForAlbums extends RecyclerView.Adapter<AdapterForAlbums.ViewHolder>{
     private Context context;
+    List<Album> list;
 //    private OnAlbumAdapterItemClickListener adapterItemClickListener;
 
 
-    public AdapterForAlbums(Context context, Cursor cursor) {
-        super(context, cursor);
+    public AdapterForAlbums(Context context) {
         this.context = context;
+        list = new ArrayList<>();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.album_card,parent,false);
         return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.title.setText(list.get(position).getTitle());
+        holder.photosList.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
+        holder.photosList.setAdapter(new AdapterForPhotos(context,DBFunctions.getInstance(context).getDatabasePhotos(list.get(position).getId())));
+    }
+
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    public void updateList(List<Album> list){
+        this.list = list;
     }
 
 //    @Override
@@ -60,13 +79,6 @@ public class AdapterForAlbums extends CursorRecyclerViewAdapter<AdapterForAlbums
 ////            }
 ////        });
 //    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-        viewHolder.title.setText(cursor.getString(cursor.getColumnIndex(DBHelper.ALBUM_TITLE)));
-        viewHolder.photosList.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false));
-        viewHolder.photosList.setAdapter(new AdapterForPhotos(context,DBFunctions.getInstance(context).getPhotosCursor(cursor.getString(cursor.getColumnIndex(DBHelper.ID)))));
-    }
 
 //    public interface OnAlbumAdapterItemClickListener{
 //        void onItemClicked(Album album);

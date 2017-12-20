@@ -15,16 +15,16 @@ public interface ServerAPI {
     Call<List<User>> getUsers();
 
     @GET("albums")
-    Call<List<Album>> getAlbums(@Query("userIds")List<String> userIds);
+    Call<List<Album>> getAlbums(@Query("userIds")List<Long> userIds);
 
     @GET("albums")
-    Call<List<Album>> getAlbums(@Query("userId") String userId);
+    Call<List<Album>> getAlbums(@Query("userId") Long userId);
 
     @GET("photos")
-    Call<List<Photo>> getPhotos(@Query("albumIds")List<String> albumIds);
+    Call<List<Photo>> getPhotos(@Query("albumIds")List<Long> albumIds);
 
     @GET("photos")
-    Call<List<Photo>> getPhotos(@Query("albumId") String[] albumId);
+    Call<List<Photo>> getPhotos(@Query("albumId") Long[] albumId);
 
 //    @GET("photos")
 //    void getPhotos(@Query("albumId")int albumId, Callback<List<Photo>> callback);

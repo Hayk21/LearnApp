@@ -1,17 +1,26 @@
 package com.hayk.learnapp.rest;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.PrimaryKey;
+
+import static android.arch.persistence.room.ForeignKey.CASCADE;
+
 /**
  * Created by User on 13.11.2017.
  */
 
+@Entity(foreignKeys = @ForeignKey(entity = Album.class,parentColumns = "id",childColumns = "albumId",onDelete = CASCADE))
 public class Photo {
-    private String albumId;
-    private String id;
+    @PrimaryKey
+    private long id;
+
+    private long albumId;
     private String title;
     private String url;
     private String thumbnailUrl;
 
-    public Photo(String albumId, String id, String title, String url, String thumbnailUrl) {
+    public Photo(long albumId, long id, String title, String url, String thumbnailUrl) {
         this.albumId = albumId;
         this.id = id;
         this.title = title;
@@ -19,11 +28,11 @@ public class Photo {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public String getAlbumId() {
+    public long getAlbumId() {
         return albumId;
     }
 
-    public void setAlbumId(String albumId) {
+    public void setAlbumId(long albumId) {
         this.albumId = albumId;
     }
 
@@ -51,11 +60,19 @@ public class Photo {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public void setID(String id) {
+    public void setID(long id) {
         this.id = id;
     }
 
-    public String getID() {
+    public long getID() {
         return id;
+    }
+
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

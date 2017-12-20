@@ -10,7 +10,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="users">Users</string>
     <string name="contacts">Contacts</string>
-    <string name="page2">Page 2</string>
+    <string name="media_option">Media</string>
     <string name="log_out">Log Out</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
